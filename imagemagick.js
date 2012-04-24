@@ -115,8 +115,10 @@ function parseIdentify(input) {
       if (indent > prevIndent) indents.push(indent);
       while (indent < prevIndent) {
         indents.pop();
-        prop = props.pop();
-        prevIndent = indents[indents.length - 1];
+		if (props.length > 1) {
+			prop = props.pop();
+			prevIndent = indents[indents.length - 1];
+		} else prevIndent = 0;
       }
       if (comps.length < 2) {
         props.push(prop);
