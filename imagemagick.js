@@ -80,17 +80,19 @@ function exec2(file, args /*, options, callback */) {
   child.stderr.addListener("data", function (chunk) { std.err(chunk, options.encoding); });
 
   child.addListener("exit", function (code, signal) {
-    if (timeoutId) clearTimeout(timeoutId);
-    if (code === 0 && signal === null) {
-      std.finish(null);
-    } else {
-      var e = new Error("Command "+(timedOut ? "timed out" : "failed")+": " + std.errCurrent());
-      e.timedOut = timedOut;
-      e.killed = killed;
-      e.code = code;
-      e.signal = signal;
-      std.finish(e);
-    }
+	  process.nextTick(function() {
+		if (timeoutId) clearTimeout(timeoutId);
+		if (code === 0 && signal === null) {
+		  std.finish(null);
+		} else {
+		  var e = new Error("Command "+(timedOut ? "timed out" : "failed")+": " + std.errCurrent());
+		  e.timedOut = timedOut;
+		  e.killed = killed;
+		  e.code = code;
+		  e.signal = signal;
+		  std.finish(e);
+		}
+	  });
   });
 
   return child;
